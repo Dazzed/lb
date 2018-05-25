@@ -37,7 +37,13 @@ $(document).ready(async function () {
       console.log('Reconnecting');
     });
   });
+  socket.on('ping', () => {
+    console.log('Ping');
+  });
 
+  socket.on('pong', (latency) => {
+    console.log(`Pong latency:${latency}ms`);
+  });
 });
 
 $(async function () {
@@ -59,7 +65,7 @@ $(async function () {
       const chats = await getRemoteResource(`${serverURL}/getChats?roomId=${roomId}&time=${timeStamp}`);
       for (let chat of chats) {
         if (chat.type == 'text') {
-          console.log('got new message', chat);
+          console.log('Got new message', chat);
           output.innerHTML += `<p><strong>${chat.handle}</strong> : &nbsp${chat.message}</p>`;
         }
         else if (chat.type == 'image') {
@@ -113,7 +119,7 @@ function getRemoteResource(URL) {
       url: URL,
       dataType: 'jsonp',
       success: function (json) {
-        console.log(`Got the resource form${URL} : ${json}`);
+        console.log(`Got the resource form:${URL} : ${json}`);
         return resolve(json);
       },
       error: function (error) {
