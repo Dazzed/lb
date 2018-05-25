@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <link href="./styles.css" rel="stylesheet">
+  <title>Chat - socket.io, RabbitMQ</title>
+</head>
+
+<body>
+  <div id="room-name">Room:</div>
+  <div id="connection-status">Status</div>
+  <div id="mario-chat">
+    <div id="search-container" class="search-container">
+      <input id="room" type="text" placeholder="Room" />
+      <button id="search-room">Enter room</button>
+    </div>
+    <div id="loading" class="loading" style="display: none;">Loading...</div>
+    <div id="content-container" class="content-container" style="display: none;">
+      <div id="chat-window">
+        <div id="output">
+        </div>
+      </div>
+      <div id="feedback"></div>
+      <input id="handle" type="text" placeholder="Handle" />
+      <input id="message" type="text" placeholder="Message" />
+      <button id="send">Send</button>
+      <span class="fileinput-button">
+        <span>Select file</span>
+        <input id="fileupload" type="file" name="filetoupload">
+      </span>
+    </div>
+  </div>
+  <script src="./chat.js"></script>
+</body>
+
+</html>
