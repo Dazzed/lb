@@ -9,6 +9,8 @@ var servers = [
 ];
 var failoverTimer = [];
 
+const port = process.env.PORT || 3001;
+
 // Create a proxy object for each target.
 var proxies = servers.map(function (target) {
   return new proxy.createProxyServer({
@@ -131,4 +133,4 @@ server.on('upgrade', function (req, socket, head) {
   });
 });
 
-server.listen(3000);
+server.listen(port);
