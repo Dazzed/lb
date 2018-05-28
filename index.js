@@ -91,7 +91,7 @@ var startFailoverTimer = function (index) {
   failoverTimer[index] = setTimeout(function () {
     // Check if the server is up or not
     request({
-      url: 'http://' + proxies[index].options.target.host,
+      url: 'https://' + proxies[index].options.target.host,
       method: 'HEAD',
       timeout: 10000
     }, function (err, res, body) {
