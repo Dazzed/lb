@@ -2,14 +2,14 @@ var http = require('http');
 var proxy = require('http-proxy');
 var request = require('request');
 
+const port = process.env.PORT || 3000;
+
 // Define the servers to load balance.
 var servers = [
-  { host: 'https://sameep-socket-test1.herokuapp.com/'},
-  { host: 'https://sameep-socket-test2.herokuapp.com/'}
+  { host: 'sameep-socket-test1.herokuapp.com', port: 80 },
+  { host: 'sameep-socket-test2.herokuapp.com', port: 80 }
 ];
 var failoverTimer = [];
-
-const port = process.env.PORT || 3001;
 
 // Create a proxy object for each target.
 var proxies = servers.map(function (target) {
@@ -91,7 +91,7 @@ var startFailoverTimer = function (index) {
   failoverTimer[index] = setTimeout(function () {
     // Check if the server is up or not
     request({
-      url: 'https://' + proxies[index].options.target.host,
+      url: 'http://' + proxies[index].options.target.host + ':' + proxies[index].options.target.port,
       method: 'HEAD',
       timeout: 10000
     }, function (err, res, body) {
