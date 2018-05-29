@@ -133,4 +133,6 @@ server.on('upgrade', function (req, socket, head) {
   });
 });
 
-server.listen(port);
+server.listen(port, () => {
+  console.log('Main server listening at Port:', port);
+});
