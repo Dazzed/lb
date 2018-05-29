@@ -6,8 +6,8 @@ const port = process.env.PORT || 3000;
 
 // Define the servers to load balance.
 var servers = [
-  { host: 'sameep-socket-test1.herokuapp.com', port: 443 },
-  { host: 'sameep-socket-test2.herokuapp.com', port: 443 }
+  { host: 'https://sameep-socket-test1.herokuapp.com', port: 443 },
+  { host: 'https://sameep-socket-test2.herokuapp.com', port: 443 }
 ];
 var failoverTimer = [];
 
@@ -17,6 +17,7 @@ var proxies = servers.map(function (target) {
     target: target,
     ws: true,
     xfwd: true,
+    secure: true,
     down: false
   });
 });
@@ -91,7 +92,7 @@ var startFailoverTimer = function (index) {
   failoverTimer[index] = setTimeout(function () {
     // Check if the server is up or not
     request({
-      url: 'https://' + proxies[index].options.target.host + ':' + proxies[index].options.target.port,
+      url: proxies[index].options.target.host + ':' + proxies[index].options.target.port,
       method: 'HEAD',
       timeout: 10000
     }, function (err, res, body) {
