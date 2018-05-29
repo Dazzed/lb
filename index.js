@@ -1,5 +1,4 @@
 var http = require('http');
-var fs = require('fs');
 var proxy = require('http-proxy');
 var request = require('request');
 
@@ -7,8 +6,8 @@ const port = process.env.PORT || 3000;
 
 // Define the servers to load balance.
 var servers = [
-  { host: 'http://sameep-socket-test1.herokuapp.com:80' },
-  { host: 'http://sameep-socket-test2.herokuapp.com:80' }
+  { host: 'http://sameep-socket-test1.herokuapp.com:80'},
+  { host: 'http://sameep-socket-test2.herokuapp.com:80'}
 ];
 var failoverTimer = [];
 
@@ -18,11 +17,7 @@ var proxies = servers.map(function (target) {
     target: target.host,
     ws: true,
     xfwd: true,
-    ssl: {
-      key: fs.readFileSync('valid-ssl-key.pem', 'utf8'),
-      cert: fs.readFileSync('valid-ssl-cert.pem', 'utf8')
-    },
-    secure: true,
+    secure: false,
     down: false
   });
 });
