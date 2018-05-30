@@ -1,4 +1,5 @@
 var http = require('http');
+var fs = require('fs');
 var proxy = require('http-proxy');
 var request = require('request');
 
@@ -6,18 +7,29 @@ const port = process.env.PORT || 3000;
 
 // Define the servers to load balance.
 var servers = [
-  { host: 'http://sameep-socket-test1.herokuapp.com:80'},
-  { host: 'http://sameep-socket-test2.herokuapp.com:80'}
+  { host: '172.31.34.54', port: 3001 },
+  { host: '172.31.43.98', port: 3002 }
 ];
 var failoverTimer = [];
+
+// // load the SSL cert
+// var ca = [
+//   fs.readFileSync('./certs/PositiveSSLCA2.crt'),
+//   fs.readFileSync('./certs/AddTrustExternalCARoot.crt')
+// ];
+// var opts = {
+//   ca: ca,
+//   key: fs.readFileSync('./certs/example_wild.key'),
+//   cert: fs.readFileSync('./certs/STAR_example_com.crt')
+// };
 
 // Create a proxy object for each target.
 var proxies = servers.map(function (target) {
   return new proxy.createProxyServer({
-    target: target.host,
+    target: target,
     ws: true,
     xfwd: true,
-    secure: false,
+    // ssl: opts,
     down: false
   });
 });
@@ -92,7 +104,7 @@ var startFailoverTimer = function (index) {
   failoverTimer[index] = setTimeout(function () {
     // Check if the server is up or not
     request({
-      url: proxies[index].options.target.host,
+      url: 'http://' + proxies[index].options.target.host + ':' + proxies[index].options.target.port,
       method: 'HEAD',
       timeout: 10000
     }, function (err, res, body) {
@@ -100,11 +112,11 @@ var startFailoverTimer = function (index) {
 
       if (res && res.statusCode === 200) {
         proxies[index].options.down = false;
-        console.log('Server #' + index + ' is back up.');
+        console.log('Server #' + index + ' is up.');
       } else {
         proxies[index].options.down = true;
         startFailoverTimer(index);
-        console.log('Server #' + index + ' is still down.');
+        console.log('Server #' + index + ' is down.');
       }
     });
   }, 10000);
@@ -129,11 +141,12 @@ server.on('upgrade', function (req, socket, head) {
   proxy.ws(req, socket, head);
 
   proxy.on('error', function (err, req, socket) {
+    console.log('Error in socket Connection:',err);
     socket.end();
     startFailoverTimer(proxyIndex);
   });
 });
 
 server.listen(port, () => {
-  console.log('Main server listening at Port:', port);
+  console.log('Main server listening at PORT:', port);
 });
