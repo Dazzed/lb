@@ -6,8 +6,8 @@ const port = process.env.PORT || 3000;
 
 // Define the servers to load balance.
 var servers = [
-  { host: 'http://sameep-socket-test1.herokuapp.com'},
-  { host: 'http://sameep-socket-test2.herokuapp.com'}
+  { host: 'http://sameep-socket-test1.herokuapp.com:80'},
+  { host: 'http://sameep-socket-test2.herokuapp.com:80'}
 ];
 var failoverTimer = [];
 
