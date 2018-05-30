@@ -141,12 +141,12 @@ server.on('upgrade', function (req, socket, head) {
   proxy.ws(req, socket, head);
 
   proxy.on('error', function (err, req, socket) {
-    console.log('Error in socket Connection:',err);
+    console.log('Error in socket Connection:', err);
     socket.end();
     startFailoverTimer(proxyIndex);
   });
 });
 
-server.listen(port, () => {
+server.listen(port, function () {
   console.log('Main server listening at PORT:', port);
 });
