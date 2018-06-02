@@ -1,7 +1,7 @@
-var http = require('http');
-var fs = require('fs');
-var proxy = require('http-proxy');
-var request = require('request');
+const fs = require('fs');
+const http = require('http');
+const request = require('request');
+const proxy = require('http-proxy');
 
 const port = process.env.PORT || 3000;
 
@@ -12,24 +12,12 @@ var servers = [
 ];
 var failoverTimer = [];
 
-// // load the SSL cert
-// var ca = [
-//   fs.readFileSync('./certs/PositiveSSLCA2.crt'),
-//   fs.readFileSync('./certs/AddTrustExternalCARoot.crt')
-// ];
-// var opts = {
-//   ca: ca,
-//   key: fs.readFileSync('./certs/example_wild.key'),
-//   cert: fs.readFileSync('./certs/STAR_example_com.crt')
-// };
-
 // Create a proxy object for each target.
 var proxies = servers.map(function (target) {
   return new proxy.createProxyServer({
     target: target,
     ws: true,
     xfwd: true,
-    // ssl: opts,
     down: false
   });
 });
@@ -45,6 +33,7 @@ var selectServer = function (req, res) {
   var index = -1;
   var i = 0;
 
+  console.log('Client requested for a Proxy');
   // Check if there are any cookies.
   if (req.headers && req.headers.cookie && req.headers.cookie.length > 1) {
     var cookies = req.headers.cookie.split('; ');
@@ -124,6 +113,7 @@ var startFailoverTimer = function (index) {
 
 // Select the next server and send the http request.
 var serverCallback = function (req, res) {
+  console.log('Web Request:');
   var proxyIndex = selectServer(req, res);
   var proxy = proxies[proxyIndex];
   proxy.web(req, res);
@@ -136,6 +126,7 @@ var server = http.createServer(serverCallback);
 
 // Get the next server and send the upgrade request.
 server.on('upgrade', function (req, socket, head) {
+  console.log('Socket Upgrade Request:');
   var proxyIndex = selectServer(req);
   var proxy = proxies[proxyIndex];
   proxy.ws(req, socket, head);
