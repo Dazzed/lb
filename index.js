@@ -6,10 +6,17 @@ const proxy = require('http-proxy');
 const port = process.env.PORT || 3000;
 
 // Define the servers to load balance.
+
 var servers = [
   { host: '172.31.38.177', port: 3001 },
   { host: '172.31.32.153', port: 3002 }
 ];
+
+// var servers = [
+//   { host: '127.0.0.1', port: 3001 },
+//   { host: '127.0.0.1', port: 3002 }
+// ];
+
 var failoverTimer = [];
 
 // Create a proxy object for each target.
